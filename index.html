@@ -8,26 +8,57 @@ img{
 }
 
 </style>
+<script>
+
+	enabled = true;
+
+	function disable(){
+		if(enabled){
+		enabled = false;
+			var smiles = document.getElementsByTagName('img');
+			for (i = 0; i < smiles.length; i++) {
+				smiles[i].src = smiles[i].src.replace('.svg','_disable.svg');
+			}
+			
+			setTimeout(function(){enable()}, 1500);
+		}
+	}
+	
+	function enable(){
+		var smiles = document.getElementsByTagName('img');
+		for (i = 0; i < smiles.length; i++) {
+			smiles[i].src = smiles[i].src.replace('_disable.svg','.svg');
+		}
+		
+		enabled = true;
+	}
+
+</script>
 </head>
 <body>
 <center><h1> How was work today ? </h1></center>
 <center>
 <img 
-    src="images/outline-sentiment_very_dissatisfied-24px.svg" 
+    src="images/very_dissatisfied.svg" 
+	onclick="disable()"
     width="20%" />
 
 <img 
-    src="images/outline-sentiment_dissatisfied-24px.svg" 
+    src="images/dissatisfied.svg" 
+	onclick="disable()"
     width="20%" />
 	
 <img 
-    src="images/outline-sentiment_satisfied-24px.svg" 
+    src="images/satisfied.svg" 
+	onclick="disable()"
     width="20%" />
 
 <img 
-    src="images/outline-sentiment_very_satisfied-24px.svg" 
+    src="images/very_satisfied.svg" 
+	onclick="disable()"
     width="20%" />	
 </center>
+
 </body>
 
 </html>
