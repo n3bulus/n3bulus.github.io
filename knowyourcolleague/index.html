@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script>
+
+        questions = [
+            "What is your stange talent?",
+            "What is your obssession these days?",
+            "What do you like most about the work you do?",
+            "Project you are more proud of",
+            "What do your colleagues do not know about you?",
+            "One thing everyone should try at least once",
+            "What was your journey to arrive here?"
+        ]
+
+        function getquestion(){
+            i = Math.round(Math.random()*6);
+
+            document.getElementById("container").innerHTML = questions[i];
+
+        }
+    </script>
+
+
+</head>
+<body>
+    <center>
+    <div id="container" class="display-1" onclick="getquestion()">START NOW</div>
+</center>
+</body>
+
+</html>
