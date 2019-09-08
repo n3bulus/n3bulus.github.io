@@ -4,6 +4,8 @@
 <head>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script>
+        i = -1;
+        
         questions = [
             "What is your stange talent?",
             "What is your obssession these days?",
@@ -14,9 +16,15 @@
             "What was your journey to arrive here?"
         ]
         function getquestion(){
-            i = Math.round(Math.random()*6);
+            j =  Math.round(Math.random()*6)
+            while(i == j){
+                i = Math.round(Math.random()*6);
+            }
+            i = j;
             document.getElementById("container").innerHTML = questions[i];
         }
+
+        
     </script>
 
     <style>
