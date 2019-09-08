@@ -20,11 +20,6 @@
     </script>
 
     <style>
-    .square-container {
-        text-align: center;
-        position: relative; 
-        overflow: hidden;
-        }
 
     .unselectable {
     -webkit-touch-callout: none;
@@ -42,24 +37,34 @@
         border: 20px solid white;
         margin: 20px;
         color: white;
-        vertical-align: bottom;
         font-weight: bold;
-        padding: 20px
+        text-align: center;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        position: absolute;
         }
     body{
         background-color: black;
+    }
+    .question{
+        left: 0px;
+        top: 50%;
+        width: 100%;
+        transform: translate(0%, -50%);
+        position: inherit;
+        padding: 20px;
     }
     </style>
 
 
 </head>
 <body style="height: 100%; width: 100%">
-
-    <div class="square-container">
-        <div class="square display-1 unselectable" id="container" onclick="getquestion()">
-                START NOW
-        </div>
+<div class="container">
+        <div class="square display-1 unselectable" onclick="getquestion()">
+               <p id="container" class="question">START NOW</p>
       </div>
+    </div>
 </body>
 
 </html>
