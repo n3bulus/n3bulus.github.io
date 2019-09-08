@@ -21,7 +21,7 @@
                 i = Math.round(Math.random()*6);
             }
             i = j;
-            document.getElementById("container").innerHTML = questions[i];
+            document.getElementById("container").innerHTML = questions[i].toUpperCase();
         }
 
         
@@ -52,8 +52,10 @@
         transform: translate(-50%, -50%);
         position: absolute;
         }
-    body{
+    html, body{
         background-color: black;
+        width: 100%;
+        height: 100%;
     }
     .question{
         left: 0px;
@@ -63,16 +65,28 @@
         position: inherit;
         padding: 20px;
     }
+
+    .container{
+        z-index: -2;
+    }
+
+    .clickable{
+        width: 100%;
+        height: 100%;
+        left: 0px;
+        top: 0px;
+        z-index: 999;
+        position:absolute;
+    }
     </style>
 
 
 </head>
-<body style="height: 100%; width: 100%">
-<div class="container">
-        <div class="square display-1 unselectable" onclick="getquestion()">
-               <p id="container" class="question">START NOW</p>
-      </div>
-    </div>
+<body>
+<div class="square display-1 unselectable">
+        <p id="container" class="question">START NOW</p>
+</div>
+<div class="clickable" onclick="getquestion()"></div>
 </body>
 
 </html>
