@@ -24,7 +24,7 @@
             xhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
             xhttp.send();*/
 			
-			setTimeout(function(){enable()}, 500);
+			setTimeout(function(){enable()}, 1000);
 		}
 	}
 	
