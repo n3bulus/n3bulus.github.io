@@ -1,33 +1,34 @@
+
 <html>
 	<head>
 		<link rel="stylesheet" type="text/css" href="style/buttons.css">
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-		<script src="script/buttons.js"></script>
+		<script src="code.js"></script>
 	</head>
 <body>
 	<div id="title">
-	<center><strong><h1 class="display-1"> HOW WAS WORK TODAY? </h1></strong></center>
+	<center><strong><h1 class="display-1"> HOW WOULD YOU RATE TODAY SHOW&TELL? </h1></strong></center>
 	</div>
 	<div id="container">
 	<center>
 		<img 
 			src="images/very_dissatisfied.svg" 
-			onclick="disable()"
+			onclick="disable(1)"
 			width="20%" />
 
 		<img 
 			src="images/dissatisfied.svg" 
-			onclick="disable()"
+			onclick="disable(2)"
 			width="20%" />
 			
 		<img 
 			src="images/satisfied.svg" 
-			onclick="disable()"
+			onclick="disable(3)"
 			width="20%" />
 
 		<img 
 			src="images/very_satisfied.svg" 
-			onclick="disable()"
+			onclick="disable(4)"
 			width="20%" />		
 	</center>
 	<center><strong><h2 class="display-1" id="thanks" style="color:green"> THANKS FOR VOTING ... </h2></strong></center>
@@ -36,5 +37,3 @@
 </body>
 
 </html>
-
-
