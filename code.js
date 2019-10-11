@@ -1,11 +1,20 @@
-	enabled = true;
+    enabled = true;
+    var smiles = document.getElementsByTagName('img');
+    for (i = 0; i < smiles.length; i++) {
+        smiles[i].addEventListener('click', function(){
+            disable(i)
+       }); ;  
+    }
+    
+    document.getElementById('thanks').style.display = "none";
+
 	function disable(vote){
 		if(enabled){
 		enabled = false;
 			var smiles = document.getElementsByTagName('img');
 			for (i = 0; i < smiles.length; i++) {
 				smiles[i].src = smiles[i].src.replace('.svg','_disable.svg');
-				smiles[i].style.display = "none";
+				smiles[i].onclick = "";
 				document.getElementById('thanks').style.display = "";
             }
 
@@ -24,7 +33,7 @@
             xhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
             xhttp.send();*/
 			
-			setTimeout(function(){enable()}, 1000);
+			setTimeout(function(){enable()}, 3000);
 		}
 	}
 	
@@ -33,7 +42,9 @@
 		for (i = 0; i < smiles.length; i++) {
 			smiles[i].src = smiles[i].src.replace('_disable.svg','.svg');
 			document.getElementById('thanks').style.display = "none";
-			smiles[i].style.display = "";
+			smiles[i].addEventListener('click', function(){
+                disable(i)
+           }); ;
 			
 		}
 		
