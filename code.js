@@ -10,8 +10,10 @@
             }
             
             var xhttp = new XMLHttpRequest();
-
-            xhttp.open("GET", "https://docs.google.com/forms/d/e/1FAIpQLSd-BtSXkR0tJtlwOcj9nvnDY50ouXejYCybZFP4Hz9h8iM9Eg/viewform?usp=pp_url&entry.746412578=" + vote, true);
+            xhttp.open("POST", "https://docs.google.com/forms/d/e/1FAIpQLSd-BtSXkR0tJtlwOcj9nvnDY50ouXejYCybZFP4Hz9h8iM9Eg/formResponse?usp=pp_url&entry.746412578=" + vote + "&submit=Submit", true);
+            xhttp.setRequestHeader('Accept', 'application/json');
+            xhttp.setRequestHeader('Access-Control-Allow-Headers', '*');
+            xhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
             xhttp.send();
 			
 			setTimeout(function(){enable()}, 500);
