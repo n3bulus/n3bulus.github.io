@@ -9,6 +9,7 @@
     document.getElementById('thanks').style.display = "none";
 
 	function disable(vote){
+		console.log(vote);
 		if(enabled){
 		enabled = false;
 			var smiles = document.getElementsByTagName('img');
@@ -24,7 +25,7 @@
                 mode: "no-cors"
             }
 
-            )
+            );
             
             /*var xhttp = new XMLHttpRequest();
             xhttp.open("GET", "https://docs.google.com/forms/d/e/1FAIpQLSd-BtSXkR0tJtlwOcj9nvnDY50ouXejYCybZFP4Hz9h8iM9Eg/formResponse?usp=pp_url&entry.746412578=" + vote + "&submit=Submit", true);
