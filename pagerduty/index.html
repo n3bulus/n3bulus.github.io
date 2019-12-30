@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+</head>
+<body>
+    <div class="container">
+    <h1><center><b>VALIDATE</b> a pager duty service name or <b>GENERATE</b> one?</center></h1>
+    <br>
+    <div class="row">
+        <div class="col-md-6"><button type="button" class="btn btn-success btn-lg btn-block" id="validate" onclick="validate()">Validate</button></div>
+        <div class="col-md-6"><button type="button" class="btn btn-default btn-lg btn-block" id="generate" onclick="generate()">Generate</button></div>
+    </div>
+    <br>
+    <div id="status"></div>
+    <hr>
+    <div id="validator_fields">
+    <h2>Pager duty service name</h2>
+    <em>For manual service names, remove <strong>"manual-"</strong> from the prefix, if you generate one, add it in the prefix.</em>
+    <em>For more information <a target="_blank" href="https://livesport.atlassian.net/wiki/spaces/Support/pages/1585447604/Pager+Duty+-+Services+Configuration+Guide">click here</a></em>
+    <div class="input-group input-group-lg">
+            <span class="input-group-addon btn" disabled id="clipboard" title="Copy to Clipboard" onclick="clipboard()"><span class="glyphicon glyphicon-copy"></span></span>
+            <input type="text" name="service_name"placeholder="be-playback-ingestor-prod-eu-central-1-728650748678-pb-trex_eu-central-1_prod_728650748678" title="format : {group}-{application}-{?component}-{env}-{?region|?account}-{?cluster}"  class="form-control" id="service_name">
+    </div>
+    <small><em>FORMAT : <strong>{group}</strong>-<strong>{application}</strong>-{?component}-<strong>{env}</strong>-{?region|?account}-{?cluster}</em></small>
+
+    <br>
+    <h2>Mandatory Fields:</h2>
+    <div class="row">
+              <div class="col-md-2"><input type="text" class="form-control" readonly title="fe/be/fs/na" value="Group :"></div>
+              <div class="col-md-10"><input type="text" class="form-control" placeholder="fe/be/fs/na" id="group_name"></div>
+    </div>
+    <div class="row">
+            <div class="col-md-2"><input type="text" class="form-control" readonly title="playback" value="Application :"></div>
+            <div class="col-md-10"><input type="text" class="form-control" placeholder="playback" id="application_name"></div>
+  </div>
+  <div class="row">
+        <div class="col-md-2"><input type="text" class="form-control" readonly title="prod/dev/test/stage" value="Environment :"></div>
+        <div class="col-md-10"><input type="text" class="form-control" placeholder="prod/dev/test/stage" id="environment_name"></div>
+    </div>
+
+
+    <h2>Optional Fields:</h2>
+    <div class="row">
+            <div class="col-md-2"><input type="text" class="form-control" readonly title="ingestor" value="Component :"></div>
+            <div class="col-md-10"><input type="text" class="form-control" placeholder="ingestor" id="component_name"></div>
+        </div>
+    <div class="row">
+            <div class="col-md-2"><input type="text" class="form-control" readonly title="eu-central-1/us-west-2" value="Region :"></div>
+            <div class="col-md-10"><input type="text" class="form-control" placeholder="eu-central-1/us-west-2" id="region_name"></div>
+        </div>
+    <div class="row">
+            <div class="col-md-2"><input type="text" class="form-control" readonly title="728650748678" value="Account :"></div>
+            <div class="col-md-10"><input type="text" class="form-control" placeholder="728650748678" id="account_name"></div>
+        </div>
+    <div class="row">
+            <div class="col-md-2"><input type="text" class="form-control" readonly title="pb-trex_eu-central-1_prod_728650748678" value="Cluster :"></div>
+            <div class="col-md-10"><input type="text" class="form-control" placeholder="pb-trex_eu-central-1_prod_728650748678" id="cluster_name"></div>
+    </div>
+    </div>
+
+
+        <hr>
+        <button type="button" class="btn btn-primary btn-lg btn-block" id="submit" onclick="submit()">Submit</button>
+    </div>
+
+<script>
+
+    /* Validation Arrays */
+    envs = ["prod","dev","test","stage"];
+    groups = ["be","fs","fe","na"]
+    region_tops = ["us","ap","ca","cn","eu","me","sa"]
+    region_middles = ["north","south","east","west","northeast","northwest","southeast","southwest","central"]
+    region_numbers = ["1","2","3"]
+
+validate();
+
+function validate(){
+    active_status = 'validate';
+    document.getElementById("status").innerHTML = "";
+    document.getElementById("generate").classList.remove('btn-success');
+    document.getElementById("validate").classList.remove('btn-default');
+    document.getElementById("validate").classList.add('btn-success');
+    document.getElementById("generate").classList.add('btn-default');
+    inputs = document.querySelectorAll('input');
+    for (i = 2; i < inputs.length; i++)
+        if(inputs[i].hasAttribute("placeholder")){
+            inputs[i].setAttribute("readonly","");
+            inputs[i].value = "";
+        }
+
+
+    document.getElementById("clipboard").setAttribute("disabled","");
+    document.getElementById("service_name").removeAttribute("readonly");
+
+    clear_errors();
+}
+
+function generate(){
+    active_status = 'generate';
+    document.getElementById("status").innerHTML = "";
+    document.getElementById("validate").classList.remove('btn-success')
+    document.getElementById("generate").classList.remove('btn-default')
+    document.getElementById("generate").classList.add('btn-success')
+    document.getElementById("validate").classList.add('btn-default')
+    inputs = document.querySelectorAll('input');
+    for (i = 2; i < inputs.length; i++)
+        if(inputs[i].hasAttribute("placeholder")){
+            inputs[i].removeAttribute("readonly");
+            inputs[i].value = "";
+        }    
+    document.getElementById("clipboard").removeAttribute("disabled");
+    document.getElementById("service_name").setAttribute("readonly",""  );
+
+    clear_errors();
+}
+
+function submit(){
+    if (active_status == 'validate')
+        submit_validate()
+    if (active_status == 'generate')
+        submit_generate()
+}
+
+function submit_validate(){
+    const service_name = document.getElementById("service_name").value
+    const service_name_splited = service_name.split('-')
+
+    /* To show variables */
+    environment_name = '';
+    component_name = '';
+    region_name = '';
+    account_name = '';
+    cluster_name = '';
+    group_name = '';
+    application_name = '';
+
+    for(i = 0 ; i < service_name_splited.length; i++){
+        if(i == 0)
+            group_name = service_name_splited[i];
+   
+        if(i == 1){
+            application_name = service_name_splited[i];
+            break;
+        }
+    }
+
+    has_component = true;
+    environment_index = 0;
+    next = 2;
+
+    for(i = next ; i < service_name_splited.length; i++){
+       
+        if (envs.includes(service_name_splited[i].toLowerCase())){
+            environment_name = service_name_splited[i];
+            has_component = false;
+            next=i+1;
+            break;         
+        }else{
+            if (has_component)
+            component_name = component_name + '-' + service_name_splited[i]
+        }
+    }
+
+    
+
+    for(i = next; i < service_name_splited.length; i++){
+        if (region_tops.includes(service_name_splited[i].toLowerCase()) && region_middles.includes(service_name_splited[i+1].toLowerCase())  && region_numbers.includes(service_name_splited[i+2].toLowerCase()) ){
+            region_name = service_name_splited[i] + '-' + service_name_splited[i+1] + '-' + service_name_splited[i+2]
+            next = i+3;
+            break;
+        }
+    }
+
+    if(!isNaN(service_name_splited[next])){
+        account_name = service_name_splited[next]
+        next = next + 1;
+    }
+
+    for(i = next; i < service_name_splited.length; i++){
+        cluster_name = cluster_name + '-' + service_name_splited[i]
+    }
+
+
+    document.getElementById("environment_name").value = environment_name;
+    document.getElementById("component_name").value = component_name.substring(1,component_name.length);
+    document.getElementById("group_name").value = group_name;
+    document.getElementById("application_name").value = application_name;
+    document.getElementById("region_name").value = region_name;
+    document.getElementById("account_name").value = account_name;
+    document.getElementById("cluster_name").value = cluster_name.substring(1,cluster_name.length);
+
+    validate_fields();
+
+}
+
+function clear_errors(){
+    for (i = 2; i < inputs.length; i++){
+        inputs[i].classList.remove('alert')
+        inputs[i].classList.remove('alert-danger')
+    }
+}
+
+function validate_fields(){
+
+    clear_errors();
+
+    valid = false;
+    group_name = document.getElementById("group_name").value;
+    application_name = document.getElementById("application_name").value;
+    environment_name = document.getElementById("environment_name").value;
+
+    if (envs.includes(environment_name.toLowerCase()) && groups.includes(group_name.toLowerCase()) && application_name != "")
+        valid = true;
+
+    if (!envs.includes(environment_name.toLowerCase())){
+        document.getElementById("environment_name").classList.add('alert-danger')
+        if (environment_name == "")
+            document.getElementById("environment_name").value = "MISSING"
+    }
+
+    if (!groups.includes(group_name.toLowerCase())){
+        document.getElementById("group_name").classList.add('alert-danger')
+        if (group_name == "")
+            document.getElementById("group_name").value = "MISSING"
+
+    }
+
+    if (application_name == ""){
+        document.getElementById("application_name").classList.add('alert-danger')
+        document.getElementById("application_name").value = "MISSING"
+    }
+
+    if(!valid)
+        document.getElementById("status").innerHTML = '<div class="alert alert-danger"><center><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> INVALID PAGER DUTY SERVICE NAME, CHECK MANDATORY FIELDS <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span></center></div>';
+    else
+        document.getElementById("status").innerHTML = '<div class="alert alert-success"><center><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> YOUR SERVICE NAME MEETS THE PAGER DUTY REQUIREMENTS <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span></center></div>';;
+        
+    return valid;
+}
+
+function submit_generate(){
+
+    environment_name = document.getElementById("environment_name").value;
+    component_name = document.getElementById("component_name").value;
+    region_name = document.getElementById("region_name").value;
+    account_name = document.getElementById("account_name").value;
+    cluster_name = document.getElementById("cluster_name").value;
+    group_name = document.getElementById("group_name").value;
+    application_name = document.getElementById("application_name").value;
+
+    pagerduty_service_name = group_name;
+
+    pagerduty_service_name = pagerduty_service_name + '-' + application_name
+    
+    if(component_name != '')
+        pagerduty_service_name = pagerduty_service_name + '-' + component_name
+
+    pagerduty_service_name = pagerduty_service_name + '-' + environment_name
+
+    if(region_name != '')
+        pagerduty_service_name = pagerduty_service_name + '-' + region_name
+
+    if(account_name != '')
+        pagerduty_service_name = pagerduty_service_name + '-' + account_name
+
+    if(cluster_name != '')
+        pagerduty_service_name = pagerduty_service_name + '-' + cluster_name
+    
+    if (validate_fields())
+        document.getElementById("service_name").value = pagerduty_service_name    
+}
+
+function clipboard() {
+  const el = document.createElement('textarea');  // Create a <textarea> element
+  el.value = document.getElementById("service_name").value;                                 // Set its value to the string that you want copied
+  el.setAttribute('readonly', '');                // Make it readonly to be tamper-proof
+  el.style.position = 'absolute';                 
+  el.style.left = '-9999px';                      // Move outside the screen to make it invisible
+  document.body.appendChild(el);                  // Append the <textarea> element to the HTML document
+  const selected =            
+    document.getSelection().rangeCount > 0        // Check if there is any content selected previously
+      ? document.getSelection().getRangeAt(0)     // Store selection if found
+      : false;                                    // Mark as false to know no selection existed before
+  el.select();                                    // Select the <textarea> content
+  document.execCommand('copy');                   // Copy - only works as a result of a user action (e.g. click events)
+  document.body.removeChild(el);                  // Remove the <textarea> element
+  if (selected) {                                 // If a selection existed before copying
+    document.getSelection().removeAllRanges();    // Unselect everything on the HTML document
+    document.getSelection().addRange(selected);   // Restore the original selection
+  }
+};
+
+</script>
+
+</body>
+
+
+</html>
