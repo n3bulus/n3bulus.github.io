@@ -18,36 +18,55 @@ jobs:
       - name: Find renumber suggestions
         id: renumber
         run: |
-          #!/bin/bash
-          set -e
-          suggestions_file="suggestions.txt" > "$suggestions_file"
+           #!/bin/bash
+           
+            suggestions_file="suggestions.txt" 
+             > "$suggestions_file"
+            
+            renumber_png_folder() {
+                local folder="$1"
+                cd "$folder" || return
+            
+                files=($(ls -1v *.png 2>/dev/null))
+                num=1
+                for f in "${files[@]}"; do
+                    if [ "$f" != "$num.png" ]; then
+                        echo "::suggest file=${folder}/${f}::${num}.png" >> "$GITHUB_OUTPUT"
+                        echo "${folder}/${f}|${num}.png" >> ../../"$suggestions_file"
+                    fi
+                    num=$((num + 1))
+                done
+            
+                cd - > /dev/null
+            }
+            
+            renumber_jpg_folder() {
+                local folder="$1"
+                cd "$folder" || return
+            
+                files=($(ls -1v *.jpg 2>/dev/null))
+                num=1
+                for f in "${files[@]}"; do
+                    if [ "$f" != "$num.jpg" ]; then
+                        echo "::suggest file=${folder}/${f}::${num}.jpg" >> "$GITHUB_OUTPUT"
+                        echo "${folder}/${f}|${num}.jpg" >> ../../"$suggestions_file"
+                    fi
+                    num=$((num + 1))
+                done
+            
+                cd - > /dev/null
+            }
+            
+            renumber_png_folder "assets/accessories"
+            renumber_png_folder "assets/mouths"
+            renumber_jpg_folder "assets/backgrounds"
+            
+            if [ ! -s "$suggestions_file" ]; then
+                echo "no_suggestions=true" >> "$GITHUB_OUTPUT"
+            else
+                echo "no_suggestions=false" >> "$GITHUB_OUTPUT"
+            fi
 
-          renumber_folder() {
-              local folder="$1"
-              cd "$folder" || return
-
-              files=($(ls -1v *.png 2>/dev/null))
-              num=1
-              for f in "${files[@]}"; do
-                  if [ "$f" != "$num.png" ]; then
-                      echo "::suggest file=${folder}/${f}::${num}.png" >> "$GITHUB_OUTPUT"
-                      echo "${folder}/${f}|${num}.png" >> ../"$suggestions_file"
-                  fi
-                  num=$((num + 1))
-              done
-
-              cd - > /dev/null
-          }
-
-          renumber_folder "assets/accessories"
-          renumber_folder "assets/mouths"
-          renumber_folder "assets/backgrounds"
-
-          if [ ! -s "$suggestions_file" ]; then
-            echo "no_suggestions=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "no_suggestions=false" >> "$GITHUB_OUTPUT"
-          fi
 
       - name: Post review suggestions
         if: steps.renumber.outputs.no_suggestions == 'false'
