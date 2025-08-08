@@ -20,8 +20,7 @@ jobs:
         run: |
           #!/bin/bash
           set -e
-          suggestions_file="suggestions.txt"
-          > "$suggestions_file"
+          suggestions_file="suggestions.txt" > "$suggestions_file"
 
           renumber_folder() {
               local folder="$1"
