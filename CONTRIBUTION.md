@@ -1,4 +1,4 @@
-# Contributing to the Clippy Avatar Generator
+# Contributing to the Avatar Generator
 
 Thank you for wanting to contribute! 🎉  
 This project is powered by community-made assets, so your creativity makes it even better.
