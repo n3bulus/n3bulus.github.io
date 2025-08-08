@@ -75,26 +75,22 @@ jobs:
           script: |
             const fs = require('fs');
             const suggestions = fs.readFileSync('suggestions.txt', 'utf8').trim().split('\n');
-            let body = "### 🔄 Asset Renumbering Suggestions\n\nClick 'Apply suggestion' to rename files correctly:\n\n";
-            let reviewComments = [];
-
+            
+            let body = "### 🔄 Asset Renumbering Suggestions\n\nPlease rename the following files:\n\n";
+            
             for (const line of suggestions) {
               const [oldPath, newName] = line.split('|');
-              body += `- \`${oldPath}\` → \`${newName}\`\n`;
+              body += `- \`${oldPath}\` → \`${newName}\`  \n  \`git mv ${oldPath} ${path.dirname(oldPath)}/${newName}\`\n`;
 
-              reviewComments.push({
-                path: oldPath,
-                line: 1,
-                side: "RIGHT",
-                body: `\`\`\`suggestion\n${newName}\n\`\`\``
-              });
             }
 
+            
+            // Send general review without inline comments
             await github.rest.pulls.createReview({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.payload.pull_request.number,
-              event: "REQUEST_CHANGES",
-              body,
-              comments: reviewComments
+              event: "REQUEST_CHANGES", // or "COMMENT" if you don't want to block merging
+              body: body
             });
+
