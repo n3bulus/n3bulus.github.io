@@ -1,0 +1,82 @@
+name: Suggest Asset Renumbering
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  suggest-renumber:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+
+      - name: Find renumber suggestions
+        id: renumber
+        run: |
+          #!/bin/bash
+          set -e
+          suggestions_file="suggestions.txt"
+          > "$suggestions_file"
+
+          renumber_folder() {
+              local folder="$1"
+              cd "$folder" || return
+
+              files=($(ls -1v *.png 2>/dev/null))
+              num=1
+              for f in "${files[@]}"; do
+                  if [ "$f" != "$num.png" ]; then
+                      echo "::suggest file=${folder}/${f}::${num}.png" >> "$GITHUB_OUTPUT"
+                      echo "${folder}/${f}|${num}.png" >> ../"$suggestions_file"
+                  fi
+                  num=$((num + 1))
+              done
+
+              cd - > /dev/null
+          }
+
+          renumber_folder "assets/accessories"
+          renumber_folder "assets/mouths"
+          renumber_folder "assets/backgrounds"
+
+          if [ ! -s "$suggestions_file" ]; then
+            echo "no_suggestions=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "no_suggestions=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Post review suggestions
+        if: steps.renumber.outputs.no_suggestions == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const suggestions = fs.readFileSync('suggestions.txt', 'utf8').trim().split('\n');
+            let body = "### 🔄 Asset Renumbering Suggestions\n\nClick 'Apply suggestion' to rename files correctly:\n\n";
+            let reviewComments = [];
+
+            for (const line of suggestions) {
+              const [oldPath, newName] = line.split('|');
+              body += `- \`${oldPath}\` → \`${newName}\`\n`;
+
+              reviewComments.push({
+                path: oldPath,
+                line: 1,
+                side: "RIGHT",
+                body: `\`\`\`suggestion\n${newName}\n\`\`\``
+              });
+            }
+
+            await github.rest.pulls.createReview({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              event: "REQUEST_CHANGES",
+              body,
+              comments: reviewComments
+            });
