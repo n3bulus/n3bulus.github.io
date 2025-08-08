@@ -1,0 +1,96 @@
+name: Suggest Asset Renumbering
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  suggest-renumber:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+
+      - name: Find renumber suggestions
+        id: renumber
+        run: |
+           #!/bin/bash
+           
+            suggestions_file="suggestions.txt" 
+             > "$suggestions_file"
+            
+            renumber_png_folder() {
+                local folder="$1"
+                cd "$folder" || return
+            
+                files=($(ls -1v *.png 2>/dev/null))
+                num=1
+                for f in "${files[@]}"; do
+                    if [ "$f" != "$num.png" ]; then
+                        echo "::suggest file=${folder}/${f}::${num}.png" >> "$GITHUB_OUTPUT"
+                        echo "${folder}/${f}|${num}.png" >> ../../"$suggestions_file"
+                    fi
+                    num=$((num + 1))
+                done
+            
+                cd - > /dev/null
+            }
+            
+            renumber_jpg_folder() {
+                local folder="$1"
+                cd "$folder" || return
+            
+                files=($(ls -1v *.jpg 2>/dev/null))
+                num=1
+                for f in "${files[@]}"; do
+                    if [ "$f" != "$num.jpg" ]; then
+                        echo "::suggest file=${folder}/${f}::${num}.jpg" >> "$GITHUB_OUTPUT"
+                        echo "${folder}/${f}|${num}.jpg" >> ../../"$suggestions_file"
+                    fi
+                    num=$((num + 1))
+                done
+            
+                cd - > /dev/null
+            }
+            
+            renumber_png_folder "assets/accessories"
+            renumber_png_folder "assets/mouths"
+            renumber_jpg_folder "assets/backgrounds"
+            
+            if [ ! -s "$suggestions_file" ]; then
+                echo "no_suggestions=true" >> "$GITHUB_OUTPUT"
+            else
+                echo "no_suggestions=false" >> "$GITHUB_OUTPUT"
+            fi
+
+
+      - name: Post review suggestions
+        if: steps.renumber.outputs.no_suggestions == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const suggestions = fs.readFileSync('suggestions.txt', 'utf8').trim().split('\n');
+            
+            let body = "### 🔄 Asset Renumbering Suggestions\n\nPlease rename the following files:\n\n";
+            
+            for (const line of suggestions) {
+              const [oldPath, newName] = line.split('|');
+              body += `- \`${oldPath}\` → \`${newName}\`  \n  \`git mv ${oldPath} ${path.dirname(oldPath)}/${newName}\`\n`;
+
+            }
+
+            
+            // Send general review without inline comments
+            await github.rest.pulls.createReview({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              event: "REQUEST_CHANGES", // or "COMMENT" if you don't want to block merging
+              body: body
+            });
+
