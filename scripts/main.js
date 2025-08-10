@@ -18,11 +18,10 @@ let mouthWidth = 130;
 let mouthHeight = 75;
 
 // Eyebrow position offsets
-let eyebrowX = 135; // adjust until centered
-let eyebrowY = 50; // adjust until correct
-let eyebrowWidth = 130;
-let eyebrowHeight = 75;
-
+let eyebrowX = 105; // adjust until centered
+let eyebrowY = 60; // adjust until correct
+let eyebrowWidth = 200;
+let eyebrowHeight = 80;
 
 base.onload = () => drawAvatar();
 
