@@ -17,6 +17,12 @@ let mouthY = 220; // adjust until correct
 let mouthWidth = 130;
 let mouthHeight = 75;
 
+// Eyebrow position offsets
+let eyebrowX = 135; // adjust until centered
+let eyebrowY = 50; // adjust until correct
+let eyebrowWidth = 130;
+let eyebrowHeight = 75;
+
 
 base.onload = () => drawAvatar();
 
@@ -42,6 +48,13 @@ function drawAvatar() {
   const baseX = (canvas.width - baseWidth) / 2;
   const baseY = (canvas.height - baseHeight) / 2;
   ctx.drawImage(base, baseX, baseY, baseWidth, baseHeight);
+
+  // Eeybrow
+  const eyebrow = getEyebrowImage();
+  if (eyebrow && eyebrow.complete && eyebrow.naturalWidth > 0) {
+    ctx.drawImage(eyebrow, eyebrowX, eyebrowY, eyebrowWidth, eyebrowHeight);
+  }
+
 
   // Mouth
   const mouth = getMouthImage();
